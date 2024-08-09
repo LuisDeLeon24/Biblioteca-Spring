@@ -7,24 +7,47 @@ import org.springframework.stereotype.Service;
 
 import com.luisDeleon.webapp.biblioteca.model.Empleado;
 import com.luisDeleon.webapp.biblioteca.repository.EmpleadoRepository;
+
 @Service
 public class EmpleadoService implements IEmpleadoService{
+
     @Autowired
     private EmpleadoRepository empleadoRepository;
+
     @Override
-    public List<Empleado> listarEmpleado(){
-        return empleadoRepository.findAll();
+    public List<Empleado>listarEmpleados() {
+       return empleadoRepository.findAll();
     }
+
     @Override
     public Empleado buscarEmpleadoPorId(Long id) {
         return empleadoRepository.findById(id).orElse(null);
     }
+
     @Override
-    public Empleado guardarEmpleado(Empleado empleado) {
-        return empleadoRepository.save(empleado);
+    public Boolean guardarEmpleado(Empleado empleado) {
+        if (!verificarDpiDuplicado(empleado)) {
+            empleadoRepository.save(empleado);
+            return true;
+        }else{
+            return false;
+        }
     }
+
     @Override
     public void eliminarEmpleado(Empleado empleado) {
         empleadoRepository.delete(empleado);
+    }
+
+    public Boolean verificarDpiDuplicado(Empleado empleadoNuevo){
+        List<Empleado> empleados = listarEmpleados();
+        Boolean flag = false;
+        for (Empleado empleado : empleados) {
+            if (empleado.getDPI().equals(empleadoNuevo.getDPI())&& !empleado.getId().equals(empleadoNuevo.getId())) {
+                flag= true;//SI SE DUPLICO EL DPI
+            }
+        }
+        return flag;
+
     }
 }

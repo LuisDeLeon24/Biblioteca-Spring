@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,36 +23,45 @@ import com.luisDeleon.webapp.biblioteca.service.EmpleadoService;
 @RestController
 @RequestMapping(value = "")
 public class EmpleadoController {
+
     @Autowired
     EmpleadoService empleadoService;
+
     @GetMapping("/empleados")
-    public List<Empleado> listarEmpelado(){
-        return empleadoService.listarEmpleado();
+    public List<Empleado>listarEmpleados(){
+        return empleadoService.listarEmpleados();
     }
+
     @GetMapping("/empleado")
-    public ResponseEntity<Empleado> buscarEmpeladoPorId(@RequestParam Long Id, @RequestParam String nombre){
-        try{
-            return ResponseEntity.ok(empleadoService.buscarEmpleadoPorId(Id));
-        }catch(Exception e){
+    public ResponseEntity<Empleado>buscarEmpleadoPorId(@RequestParam Long id){
+        try {
+            return ResponseEntity.ok(empleadoService.buscarEmpleadoPorId(id));
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
     @PostMapping("/empleado")
-    public ResponseEntity<Map<String , Boolean>> agregarEmpleado(@RequestBody Empleado empleado){
-        Map<String, Boolean> response = new HashMap<>();
-        try{
-            empleadoService.guardarEmpleado((empleado));
-            response.put("Se agrego con exito", Boolean.TRUE);
-            return ResponseEntity.ok(response);
-        }catch(Exception e){
-            response.put("Se no agrego empelado", Boolean.FALSE);
+    public ResponseEntity<Map<String, String>> agregarEmpleado(@RequestBody Empleado empleado){
+        Map<String,String> response = new HashMap<>();
+        try {
+                if(empleadoService.guardarEmpleado(empleado)){
+                    response.put("message","Empleado Creado Con Exito");
+                    return ResponseEntity.ok(response);
+                }else{
+                    response.put("message","DPI Duplicado");
+                    return ResponseEntity.badRequest().body(response);
+                }    
+        } catch (Exception e) {
+            response.put("err", "Hubo Un Error Al Crear El Empleado");
             return ResponseEntity.badRequest().body(response);
         }
     }
+
     @PutMapping("/empleado")
-    public ResponseEntity<Map<String, String>> editarEmpleado(@RequestParam Long id, @RequestBody Empleado empleadoNuevo){
-        Map<String, String> response = new HashMap<>();
-        try{
+    public ResponseEntity<Map<String, String>>editarEmpleado(@RequestParam Long id, @RequestBody Empleado empleadoNuevo){
+        Map<String,String> response = new HashMap<>();
+        try {
             Empleado empleado = empleadoService.buscarEmpleadoPorId(id);
             empleado.setNombre(empleadoNuevo.getNombre());
             empleado.setApellido(empleadoNuevo.getApellido());
@@ -61,25 +69,32 @@ public class EmpleadoController {
             empleado.setDireccion(empleadoNuevo.getDireccion());
             empleado.setDPI(empleadoNuevo.getDPI());
             empleadoService.guardarEmpleado(empleado);
-            response.put("message", "el empleado se a editado");
+            if(empleadoService.guardarEmpleado(empleado)){
+                response.put("message", "El Empleado Se Edito Con Exito");
+            }else{
+                response.put("message", "DPI Duplicado");
+                return ResponseEntity.badRequest().body(response);
+            }    
             return ResponseEntity.ok(response);
-
-        }catch(Exception e){
-            response.put("message", "el empelado no se a editado");
+        } catch (Exception e) {
+            response.put("message", "Hubo Un Error Al Editar El Empleado");
             return ResponseEntity.badRequest().body(response);
         }
     }
+
     @DeleteMapping("/empleado")
-    public ResponseEntity<Map<String , String>> eliminarEmpleado(@RequestParam Long Id){
-        Map<String, String> response = new HashMap<>();
-        try{
-            Empleado empleado = empleadoService.buscarEmpleadoPorId(Id);
-            empleadoService.eliminarEmpleado(empleado);
-            response.put("message", "Empleado eliminado");
-            return ResponseEntity.ok(response);
-        }catch(Exception e){
-            response.put("message", "el empleaod no se elimino");
+    public ResponseEntity<Map<String, String>>eliminarEmpleado(@RequestParam Long id){
+        Map<String,String> response = new HashMap<>();
+        try {
+            Empleado empleado = empleadoService.buscarEmpleadoPorId(id);
+            empleadoService.eliminarEmpleado(empleado); 
+            response.put("message", "El Empleado Se Elimino Con Exito");
+            return ResponseEntity.ok(response); 
+        } catch (Exception e) {
+            response.put("message", "Hubo Un Error Al Eliminar El Empleado");
             return ResponseEntity.badRequest().body(response);
         }
+        
+
     }
 }

@@ -5,8 +5,13 @@ import java.util.List;
 import com.luisDeleon.webapp.biblioteca.model.Empleado;
 
 public interface IEmpleadoService {
-    public List<Empleado> listarEmpleado();
+    public List<Empleado>listarEmpleados();
+
+    public Boolean guardarEmpleado(Empleado empleado);
+
     public Empleado buscarEmpleadoPorId(Long id);
-    public Empleado guardarEmpleado(Empleado empleado);
+
     public void eliminarEmpleado(Empleado empleado);
+
+    public Boolean verificarDpiDuplicado(Empleado empleado);
 }

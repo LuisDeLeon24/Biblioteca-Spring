@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
  
 import com.luisDeleon.webapp.biblioteca.model.Categoria;
@@ -24,11 +25,16 @@ import com.luisDeleon.webapp.biblioteca.service.CategoriaService;
 @RequestMapping(value = "categoria")
 public class CategoriaController {
    
-    @Autowired
+     @Autowired
     CategoriaService categoriaService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Categoria>buscarCategoriaPorId(@PathVariable Long id){
+    @GetMapping("/categorias")
+    public List<Categoria>listarCategorias(){
+        return categoriaService.listarCategorias();
+    }
+
+    @GetMapping("/categoria")
+    public ResponseEntity<Categoria>buscarCategoriaPorId(@RequestParam Long id){
         try {
             return ResponseEntity.ok(categoriaService.buscarCategoriaPorId(id));
         } catch (Exception e) {
@@ -36,43 +42,44 @@ public class CategoriaController {
         }
     }
 
- 
-    @GetMapping("/")
-    public List<Categoria> listarCategoria(){
-        return categoriaService.listarCategorias();
-    }
- 
- 
-    @PostMapping("/")
-    public ResponseEntity<Map<String, Boolean>> agregarCategoria(@RequestBody Categoria categoria){
-        Map<String, Boolean> response = new HashMap<>();
-        try{
-            categoriaService.guardarCategoria(categoria);
-            response.put("Se agrego con exito", Boolean.TRUE);
-            return ResponseEntity.ok(response);
-        }catch(Exception e){
-            response.put("Se agrego con exito", Boolean.FALSE);
+    @PostMapping("/categoria")
+    public ResponseEntity<Map<String, String>> agregarCategoria(@RequestBody Categoria categoria){
+        Map<String,String> response = new HashMap<>();
+        try {
+            if (categoriaService.guardarCategoria(categoria)) {
+                response.put("message", "La Categoria Se Agrego Con Exito");
+                return ResponseEntity.ok(response);
+            }else{
+                response.put("err", "Categoria Duplicada");
+                return ResponseEntity.badRequest().body(response);
+            }            
+        } catch (Exception e) {
+            response.put("err", "Hubo Un Error Al Crear La Categoria");
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity <Map<String,String>> editarCategoria(@PathVariable Long id, @RequestBody Categoria categoriaNueva){
+    @PutMapping("/categoria")
+    public ResponseEntity<Map<String, String>>editarCategoria(@RequestParam Long id, @RequestBody Categoria categoriaNueva){
         Map<String,String> response = new HashMap<>();
         try {
             Categoria categoria = categoriaService.buscarCategoriaPorId(id);
-            categoria.setNombreCategoria(categoriaNueva.getNombreCategoria()); //Se sustituye el nuevo valor por el viejo
-            categoriaService.guardarCategoria(categoria);//Se manda la categoria vieja, ya que el Id se manda en el path
-            response.put("message", "Se editó la categoria correctamente");
-            return ResponseEntity.ok(response);
+            categoria.setNombreCategoria(categoriaNueva.getNombreCategoria());
+            if (categoriaService.guardarCategoria(categoria)) {
+                response.put("message", "La Categoria Se Edito Con Exito");
+                return ResponseEntity.ok(response);
+            }else{
+                response.put("message", "Categoria Duplicada");
+                return ResponseEntity.badRequest().body(response);
+            }   
         } catch (Exception e) {
-            response.put("message", "No se pudo editar la categoria");
+            response.put("message", "Hubo Un Error Al Editar La Categoria");
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>>eliminarCategoria(@PathVariable Long id){
+    @DeleteMapping("/categoria")
+    public ResponseEntity<Map<String, String>>eliminarCategoria(@RequestParam Long id){
         Map<String,String> response = new HashMap<>();
         try {
             Categoria categoria = categoriaService.buscarCategoriaPorId(id);
