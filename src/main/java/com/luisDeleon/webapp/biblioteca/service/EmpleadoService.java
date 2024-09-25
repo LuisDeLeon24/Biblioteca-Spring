@@ -43,7 +43,7 @@ public class EmpleadoService implements IEmpleadoService{
         List<Empleado> empleados = listarEmpleados();
         Boolean flag = false;
         for (Empleado empleado : empleados) {
-            if (empleado.getDPI().equals(empleadoNuevo.getDPI())&& !empleado.getId().equals(empleadoNuevo.getId())) {
+            if (empleado.getDpi().equals(empleadoNuevo.getDpi())&& !empleado.getId().equals(empleadoNuevo.getId())) {
                 flag= true;//SI SE DUPLICO EL DPI
             }
         }

@@ -67,7 +67,7 @@ public class EmpleadoController {
             empleado.setApellido(empleadoNuevo.getApellido());
             empleado.setTelefono(empleadoNuevo.getTelefono());
             empleado.setDireccion(empleadoNuevo.getDireccion());
-            empleado.setDPI(empleadoNuevo.getDPI());
+            empleado.setDpi(empleadoNuevo.getDpi());
             empleadoService.guardarEmpleado(empleado);
             if(empleadoService.guardarEmpleado(empleado)){
                 response.put("message", "El Empleado Se Edito Con Exito");

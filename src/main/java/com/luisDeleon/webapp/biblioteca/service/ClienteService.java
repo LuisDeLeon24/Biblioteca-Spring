@@ -10,22 +10,27 @@ import com.luisDeleon.webapp.biblioteca.repository.ClienteRepository;
 
 @Service
 public class ClienteService implements IClienteService{
+    
     @Autowired
     private ClienteRepository clienteRepository;
+
     @Override
-    public List<Cliente> listarCliente(){
-        return clienteRepository.findAll();
+    public List<Cliente> listarClientes() {
+       return clienteRepository.findAll();
     }
+
+    @Override
+    public Cliente buscarClientePorId(long id) {
+        return clienteRepository.findById(id).orElse(null);
+    }
+
     @Override
     public Cliente guardarCliente(Cliente cliente) {
         return clienteRepository.save(cliente);
     }
+
     @Override
     public void eliminarCliente(Cliente cliente) {
         clienteRepository.delete(cliente);
-    }
-    @Override
-    public Cliente buscarClientePorId(Long DPI) {
-        return clienteRepository.findById(DPI).orElse(null);
     }
 }

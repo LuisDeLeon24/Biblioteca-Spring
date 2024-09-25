@@ -5,9 +5,9 @@ import java.util.List;
 import com.luisDeleon.webapp.biblioteca.model.Cliente;
 
 public interface IClienteService {
-    public List<Cliente> listarCliente();
+    public List<Cliente> listarClientes();
 
-    public Cliente buscarClientePorId(Long DPI);
+    public Cliente buscarClientePorId(long id);
 
     public Cliente guardarCliente(Cliente cliente);
 

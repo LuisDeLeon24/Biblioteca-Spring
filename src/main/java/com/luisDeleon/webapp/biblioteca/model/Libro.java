@@ -1,5 +1,6 @@
 package com.luisDeleon.webapp.biblioteca.model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.Data;
 public class Libro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     private String isbn;
     private String nombre;
     @Column(columnDefinition = "TEXT")
@@ -28,5 +29,4 @@ public class Libro {
     private String cluster;
     @ManyToOne(fetch = FetchType.EAGER)
     private Categoria categoria;
-
 }
